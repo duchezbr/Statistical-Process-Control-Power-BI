@@ -14,8 +14,8 @@ The Process Capability report calculates long-term process capability statistics
 
 - Pp
 - Ppk
-- PPL
-- PPU
+- Ppl
+- Ppu
 
 These metrics measure process variation relative to Upper and Lower Specification Limits (USL/LSL) and help evaluate whether a manufacturing process is capable of consistently producing within specification.
 
