@@ -39,7 +39,100 @@ CALCULATE(
 
 ---
 
+# Monitoring Process Variability
+
+These measures evaluate short-term process variability by calculating the standard deviation over rolling seven-batch windows.
+
+Displaying these measures as KPI cards allows users to quickly determine whether process variability is increasing or decreasing without manually interpreting the control chart. The rolling window size can be adjusted to fit the manufacturing process by modifying the number of batches used in the calculations.
+
+## Rolling 7-Batch Standard Deviation
+
+Calculates the standard deviation of the seven most recent completed batches.
+
+```DAX
+Rolling 7-batch SD =
+VAR current_date = MAX('Facts'[DoM])
+
+VAR window_table =
+    TOPN(
+        7,
+        FILTER(
+            ALLSELECTED(Facts),
+            Facts[DoM] < current_date
+        ),
+        Facts[DoM],
+        DESC
+    )
+
+RETURN
+CALCULATE(
+    STDEVX.P(window_table, Facts[Value])
+)
+```
+
+---
+
+## Previous Rolling 7-Batch Standard Deviation
+
+Calculates the standard deviation for the seven batches immediately preceding the current rolling window.
+
+```DAX
+Rolling Previous 7-batch SD =
+VAR current_date =
+    MAX(Facts[DoM])
+
+VAR window_table =
+    TOPN(
+        14,
+        FILTER(
+            ALLSELECTED(Facts),
+            Facts[DoM] < current_date
+        ),
+        Facts[DoM],
+        DESC
+    )
+
+VAR previous7 =
+    EXCEPT(
+        window_table,
+        TOPN(
+            7,
+            window_table,
+            Facts[DoM],
+            DESC
+        )
+    )
+
+RETURN
+STDEVX.P(
+    previous7,
+    Facts[Value]
+)
+```
+
+---
+
+## Rolling Standard Deviation Change (%)
+
+Calculates the percent change in variability between the current and previous seven-batch windows.
+
+Positive values indicate increasing process variation, while negative values indicate decreasing variation.
+
+```DAX
+Rolling SD Change (%) =
+DIVIDE(
+    [Rolling 7-batch SD] - [Rolling Previous 7-batch SD],
+    [Rolling Previous 7-batch SD]
+)
+```
+
+---
+
+# Control Limits
+
 ## Individual Upper Control Limit (UCL)
+
+Calculates the upper control limit using the process mean plus three standard deviations.
 
 ```DAX
 Individual UCL =
@@ -50,10 +143,14 @@ Individual UCL =
 
 ## Individual Lower Control Limit (LCL)
 
+Calculates the lower control limit using the process mean minus three standard deviations.
+
 ```DAX
 Individual LCL =
 [Mean] - (3 * [Standard Deviation])
 ```
+
+---
 
 ---
 
@@ -242,18 +339,15 @@ AVERAGEX(
 
 ---
 
-# Moving Range Upper Control Limit
+# Moving Range Upper Control Limit &  Lower Control Limit
 
 ```DAX
 Moving Range UCL =
 3.267 * [Moving Range Average]
 ```
 
-The Lower Control Limit (LCL) for a Moving Range chart can be hardcoded to:
+The Lower Control Limit (LCL) for a Moving Range chart can be hardcoded to 0.
 
-```
-0
-```
 
 ---
 
