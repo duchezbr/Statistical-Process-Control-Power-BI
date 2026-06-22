@@ -1,6 +1,8 @@
 # Individuals and Moving Range (I-MR) Control Chart in Power BI
 
-This guide describes the DAX measures used to build an Individuals and Moving Range (I-MR) Statistical Process Control (SPC) chart in Power BI.
+An **Individuals and Moving Range (I-MR) Control Chart** is a Statistical Process Control (SPC) tool used to monitor process stability and detect special-cause variation when data are collected one observation at a time. The **Individuals Chart** tracks individual process measurements relative to statistically derived control limits, while the **Moving Range Chart** monitors the variation between consecutive observations to assess process consistency.
+
+This guide describes the DAX measures used to build an I-MR Control Chart in Power BI using native visuals and calculations. The measures calculate process statistics, generate control limits, identify out-of-control observations, dynamically adjust chart scaling, monitor short-term process variability using rolling standard deviations, and highlight signals that warrant further investigation.
 
 ---
 
